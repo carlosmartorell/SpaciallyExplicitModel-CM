@@ -1,4 +1,4 @@
-setwd("~/Desktop/SpExModel")
+setwd("~/Documents/GitHub/SpaciallyExplicitModel-CM/")
 
 library(cubature)
 library(rgl)
@@ -28,6 +28,15 @@ alphas2=as.matrix(alfas2[,2:ncol(alfas2)])
 rownames(alphas2)=alfas2[,1]
 bbetas=as.matrix(betas[,2:ncol(betas)])
 rownames(bbetas)=betas[,1]
+
+transf=diag(alphas1)
+alphas1[,]=-9999
+diag(alphas1)=transf
+transf=diag(alphas2)
+alphas2[,]=-9999
+diag(alphas2)=transf
+betas[,]=NA
+diag(betas)=-9999
 
 #To obtain total abundance of the species  for which we did not calculate pairwise interactions following Bayesian Variable Selection
 spnum=ncol(alphas1) #to obtain the number of species in our study
@@ -253,11 +262,11 @@ densini2=function(dims,theta,densobs){
 	txini[,,35]=0
 	txini
 }
-aa=allker(datdisp[,2],datdisp[,3],21)
-txini=densini2(21,theta,densobs) 
+aa=allker(datdisp[,2],datdisp[,3],51)
+txini=densini2(51,theta,densobs) 
 
 #bb=simu(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,betapa,DDpa,BB1pa,BB2pa,BB3pa,txini,tx0,aa,theta,3,20)
-bb=simut(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,betapa,DDpa,BB1pa,BB2pa,BB3pa,txini,tx0,dispker,theta,20,1,100)
+bb=simut(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,betapa,DDpa,BB1pa,BB2pa,BB3pa,txini,tx0,dispker,theta,20,1,20)
 beep()
 
 cien=bb[,,,100]

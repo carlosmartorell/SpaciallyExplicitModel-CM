@@ -185,7 +185,9 @@ allker=function(alfa,cc,dims){
 	for(i in 1:nsp) arr[,,i]=kerBidim(alfa[i],cc[i],dims)
 	#for(i in 1:nsp) arr[,,i]=arr[,,i]/sum(arr[,,i])
 	for(i in 1:nsp) arr[,,i]=arr[,,i]+(1-sum(arr[,,i]))/dims^2 
-	arr[c((ceiling(dims/2)):dims,1:(ceiling(dims/2)-1)),c((ceiling(dims/2)):dims,1:(ceiling(dims/2)-1)),] #hace el toro
+	kernel=arr[c((ceiling(dims/2)):dims,1:(ceiling(dims/2)-1)),c((ceiling(dims/2)):dims,1:(ceiling(dims/2)-1)),] #hace el toro
+	kernel[which(kernel<0)]=0
+	kernel
 } #array donde cada página es una especies y tiene la matriz de semillas que salen del cuadro central
 
 
@@ -220,7 +222,7 @@ simu=function(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,be
 	}
 	t2[,,1:nrow(alpabu1)]=txseed[,,1:nrow(alpabu1)]+txabu #suma de viejos individuos más nuevos para el tiempo 2? Abundance species
 	t2[,,(nrow(alpabu1)+1):nsp]=1-(1-txpa)*exp(-txseed[,,(nrow(alpabu1)+1):nsp]) #suma de viejos individuos más nuevos para el tiempo 2? Presence/absence species
-	for(k in 1:nrow(alpabu1)) t2[,,k]=matrix(rnbinom(dims^2,size=theta[k],mu=t2[,,k]),ncol=dims) #something related to model dispersion? 
+	for(k in 1:nrow(alpabu1)) t2[,,k]=matrix(rnbinom(dims^2,size=theta[k],prob=theta[k]/(theta[k]+t2[,,k])),ncol=dims) #something related to model dispersion? 
 	for(k in (nrow(alpabu1)+1):nsp) t2[,,k]=matrix(rbinom(dims^2,size=1,prob=t2[,,k]),ncol=dims)
 	t2
 }
@@ -262,11 +264,11 @@ densini2=function(dims,theta,densobs){
 	txini[,,35]=0
 	txini
 }
-aa=allker(datdisp[,2],datdisp[,3],51)
-txini=densini2(51,theta,densobs) 
+aa=allker(datdisp[,2],datdisp[,3],21)
+txini=densini2(21,theta,densobs) 
 
 #bb=simu(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,betapa,DDpa,BB1pa,BB2pa,BB3pa,txini,tx0,aa,theta,3,20)
-bb=simut(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,betapa,DDpa,BB1pa,BB2pa,BB3pa,txini,tx0,dispker,theta,20,1,20)
+bb=simut(alpabu1,alpabu2,betabu,DDabu,BB1abu,BB2abu,BB3abu,alppa1,alppa2,betapa,DDpa,BB1pa,BB2pa,BB3pa,txini,tx0,dispker,theta,20,1,100)
 beep()
 
 cien=bb[,,,100]
